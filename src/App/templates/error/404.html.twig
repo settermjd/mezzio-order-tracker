@@ -2,12 +2,14 @@
 
 {% block title %}404 Not Found{% endblock %}
 
+{% block header %}Sorry, we couldn't find a matching parcel.{% endblock %}
+
 {% block content %}
-    <h1>Oops!</h1>
-    <h2>This is awkward.</h2>
-    <p>We encountered a 404 Not Found error.</p>
-    <p>
-        You are looking for something that doesn't exist or may have moved. Check out one of the links on this page
-        or head back to <a href="{{ path('home') }}">Home</a>.
-    </p>
+    <section class="w-xl my-4 mb-7 p-8 border border-slate-200/70 rounded-md w-full bg-white shadow-lg shadow-slate-300/50 flex gap-x-4">
+        <img src="/img/404-error-small.png" alt="404 error icon" width="64" height="64">
+        <p class="ml-3 mt-2">
+            No parcel could be found matching the tracking number that you entered.
+            Try <a href="{{ path('home') }}" class="underline decoration-2 underline-offset-4 hover:text-slate-500 duration-500 ease-in-out transition delay-150">searching for another</a>.
+        </p>
+    </section>
 {% endblock %}
