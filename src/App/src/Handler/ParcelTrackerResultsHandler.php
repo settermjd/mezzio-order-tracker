@@ -7,6 +7,8 @@ namespace App\Handler;
 use App\Entity\Parcel;
 use App\Entity\ParcelTrackingDetails;
 use Doctrine\ORM\EntityManagerInterface;
+use Fig\Http\Message\StatusCodeInterface;
+use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -33,11 +35,14 @@ readonly class ParcelTrackerResultsHandler implements RequestHandlerInterface
                 'parcelTrackingDetails' => $parcelTrackingDetails,
             ]
         );
-        var_dump($parcel);
-        exit();
+
+        if ($parcel === null) {
+            return new RedirectResponse('/404');
+        }
+
         return new HtmlResponse($this->renderer->render(
             'app::parcel-tracker-results',
-            []
+            ["parcel" => $parcel]
         ));
     }
 }
