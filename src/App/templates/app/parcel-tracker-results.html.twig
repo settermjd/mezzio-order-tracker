@@ -1,0 +1,73 @@
+{% extends '@layout/default.html.twig' %}
+
+{% block header %}Track a Parcel{% endblock %}
+
+{% block title %}Track a Parcel{% endblock %}
+
+{% block content %}
+    <section class="my-9 border border-slate-200 rounded-md gap-x-4 max-w-3xl shadow-lg shadow-slate-300/50 bg-twilio-red">
+        <div class="mx-5 my-4 p-2">
+            <a href="/">
+                <img src="/img/arrow-small.png"
+                     alt="left arrow"
+                     class="border border-red-800 bg-white rounded-full p-3 hover:cursor-pointer">
+            </a>
+        </div>
+        <div class="p-8 flex flex-row bg-[url(/img/truck-small.png)] bg-right-bottom bg-no-repeat bg-origin-content bg-white">
+            <div class="w-full">
+                <h2 class="text-2xl font-bold">IKEA Stool</h2>
+                <p id="parcel-id" class="text-slate-800/75">44VAW5460123</p>
+                <div id="parcel-details" class="mt-3 py-3 border-t border-slate-200">
+                    <h3 class="text-xl font-bold mt-3 mb-5">Parcel details</h3>
+                    <div>
+                        <div class="mb-8">
+                            <h4 class="font-semibold text-lg">From</h4>
+                            Umart Online
+                        </div>
+                        <div class="mb-8">
+                            <h4 class="font-semibold text-lg">Delivered to</h4>
+                            Teddy Swims<br>
+                            <address>
+                                3 Somewhere St<br>
+                                Brookvale, NSW, 2000
+                            </address>
+                        </div>
+                        <div class="mb-8">
+                            <h4 class="font-semibold text-lg">Service</h4>
+                            Standard delivery
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg">Parcel dimensions and weight</h4>
+                            30 x 27 x 6cm, 0.9kg
+                        </div>
+                    </div>
+                </div>
+                <div id="tracking-details" class="mt-6 py-3 border-t border-slate-200">
+                    <h3 class="text-xl font-bold mt-3 mb-1">Tracking details</h3>
+                    <h4 id="tracking-id" class="mb-4">99VBZ546012301000945604</h4>
+                    <section class="mt-5">
+                        <div class="mb-8">
+                            <h5 class="font-semibold text-lg text-emerald-600">Delivered</h5>
+                            <address>Brookvale, NSW, 2000</address>
+                            <time datetime="2025-03-14 16:50">Fri 14 Mar, 16:50</time>
+                        </div>
+                        <div class="mb-8">
+                            <h5 class="font-semibold">In transit to customer</h5>
+                            <address>Brookvale, NSW, 2000</address>
+                            <time datetime="2025-03-14 14:49">Fri 14 Mar, 14:49</time>
+                        </div>
+                        <div class="mb-8">
+                            <h5 class="font-semibold">In transit to next facility</h5>
+                            <time datetime="2025-03-14 16:50">Fri 14 Mar, 18:35</time>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="font-semibold">Item accepted at warehouse</h5>
+                            <address>Sydney, NSW</address>
+                            <time datetime="2025-03-14 16:50">Thu 13 Mar, 14:49</time>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
