@@ -39,5 +39,6 @@ use Psr\Container\ContainerInterface;
 
 return static function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
     $app->get('/', App\Handler\HomePageHandler::class, 'tracker.form');
+    $app->post('/parcel', App\Handler\ParcelTrackerResultsHandler::class, 'tracker.process');
     $app->get('/api/ping', App\Handler\PingHandler::class, 'api.ping');
 };
