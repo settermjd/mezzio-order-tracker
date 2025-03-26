@@ -57,6 +57,7 @@
         "mezzio/mezzio-fastroute": "^3.11.0",
         "mezzio/mezzio-helpers": "^5.17",
         "mezzio/mezzio-twigrenderer": "^2.15",
+        "ph-7/just-http-status-codes": "^1.1",
         "skar/laminas-doctrine-orm": "^0.2.0"
     },
     "require-dev": {
