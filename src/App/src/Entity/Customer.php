@@ -10,11 +10,10 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Index;
-use Doctrine\ORM\Mapping\InverseJoinColumn;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\JoinTable;
-use Doctrine\ORM\Mapping\ManyToMany;
+use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
+
+use function sprintf;
 
 #[Entity]
 #[Table(name: 'customer')]
@@ -37,11 +36,8 @@ class Customer
      * Many customers have many parcels.
      * @var Collection<int, Parcel>
      */
-    #[JoinTable(name: 'customer_parcels')]
-    #[JoinColumn(name: 'customer_id', referencedColumnName: 'id')]
-    #[InverseJoinColumn(name: 'parcel_id', referencedColumnName: 'id', unique: true)]
-    #[ManyToMany(targetEntity: Parcel::class)]
-    private Collection|null $parcels = null;
+    #[OneToMany(targetEntity: Parcel::class, mappedBy: "customer")]
+    private Collection $parcels;
 
     #[Column(name: 'first_name', type: Types::STRING, nullable: false)]
     private string $firstName = '';
@@ -78,6 +74,10 @@ class Customer
     public function setFirstName(string $firstName): void
     {
         $this->firstName = $firstName;
+    }
+
+    public string $fullName {
+        get => sprintf("%s %s", $this->firstName, $this->lastName);
     }
 
     public function getLastName(): string

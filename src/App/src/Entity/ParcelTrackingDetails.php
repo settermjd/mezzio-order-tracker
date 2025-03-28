@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Repository\ParcelTrackingDetailsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -17,7 +18,7 @@ use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 
-#[Entity]
+#[Entity(repositoryClass: ParcelTrackingDetailsRepository::class)]
 #[Table(name: 'parcel_tracking_details')]
 #[Index(
     name: "tracking_number_parcel_idx",

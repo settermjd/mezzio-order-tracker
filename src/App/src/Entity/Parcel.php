@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Repository\ParcelRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -15,7 +16,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\Table;
 
-#[Entity]
+#[Entity(repositoryClass: ParcelRepository::class)]
 #[Table(name: 'parcel')]
 #[Index(
     name: "parcel_details_idx",
@@ -41,6 +42,9 @@ class Parcel
 
     #[Column(name: "parcel_id", type: Types::STRING, length: 12, nullable: false)]
     private string|null $parcelId = null;
+
+    #[ManyToOne(targetEntity: Customer::class, inversedBy: 'parcels')]
+    private Customer|null $customer = null;
 
     #[Column(name: 'description', type: Types::STRING, nullable: false)]
     private string $description = '';
@@ -135,6 +139,16 @@ class Parcel
     public function setId(?int $id): void
     {
         $this->id = $id;
+    }
+
+    public function getCustomer(): ?Customer
+    {
+        return $this->customer;
+    }
+
+    public function setCustomer(?Customer $customer): void
+    {
+        $this->customer = $customer;
     }
 
 }

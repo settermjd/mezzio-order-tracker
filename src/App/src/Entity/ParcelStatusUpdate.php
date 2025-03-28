@@ -36,7 +36,7 @@ class ParcelStatusUpdate
     #[Column(name: 'address', type: Types::STRING, nullable: false)]
     private string $address = '';
 
-    #[Column(name: 'created_at', type: Types::DATE_IMMUTABLE, nullable: false, options: ["default" => "CURRENT_TIMESTAMP"])]
+    #[Column(name: 'created_at', type: Types::DATETIMETZ_IMMUTABLE, nullable: false, options: ["default" => "DATE(CURRENT_DATE, 'localtime')"])]
     private DateTimeImmutable $createdAt {
         get {
             return $this->createdAt;
