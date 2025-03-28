@@ -17,6 +17,17 @@ use Doctrine\ORM\Mapping\Table;
 
 #[Entity]
 #[Table(name: 'parcel')]
+#[Index(
+    name: "parcel_details_idx",
+    columns: [
+        "parcel_id",
+        "description",
+        "dimensions",
+        "weight",
+        "delivery_service",
+        "supplier"
+    ]
+)]
 class Parcel
 {
     #[Id]
@@ -24,83 +35,106 @@ class Parcel
     #[GeneratedValue(strategy: 'IDENTITY')]
     private int|null $id = null;
 
-    #[ManyToOne(targetEntity: Parcel::class, inversedBy: 'parcels')]
-    private Customer $customer;
-
-    #[OneToOne(targetEntity: Parcel::class, inversedBy: 'parcel')]
-    #[JoinColumn(name: 'parcel_id', referencedColumnName: 'id')]
+    #[OneToOne(targetEntity: ParcelTrackingDetails::class, inversedBy: 'parcel')]
+    #[JoinColumn(name: 'parcel_tracking_id', referencedColumnName: 'id')]
     private ParcelTrackingDetails|null $parcelTrackingDetails = null;
 
-    #[Column(name: "parcel_id", type: Types::INTEGER, length: 12, nullable: false)]
-    private string|null $parcelId = null {
-        get {
-            return $this->parcelId;
-        }
-        set {
-            $this->parcelId = $value;
-        }
-    }
+    #[Column(name: "parcel_id", type: Types::STRING, length: 12, nullable: false)]
+    private string|null $parcelId = null;
 
     #[Column(name: 'description', type: Types::STRING, nullable: false)]
-    private string $description = '' {
-        get {
-            return $this->description;
-        }
-        set {
-            $this->description = $value;
-        }
-    }
+    private string $description = '';
 
     #[Column(name: 'dimensions', type: Types::STRING, nullable: false)]
-    private string $dimensions = '' {
-        get {
-            return $this->dimensions;
-        }
-        set {
-            $this->dimensions = $value;
-        }
-    }
+    private string $dimensions = '';
 
     #[Column(name: 'weight', type: Types::STRING, nullable: false)]
-    private string $weight = '' {
-        get {
-            return $this->weight;
-        }
-        set {
-            $this->weight = $value;
-        }
-    }
+    private string $weight = '';
 
     #[Column(name: 'delivery_service', type: Types::STRING, nullable: false)]
-    private string $deliveryService = '' {
-        get {
-            return $this->deliveryService;
-        }
-        set {
-            $this->deliveryService = $value;
-        }
-    }
+    private string $deliveryService = '';
 
     #[Column(name: 'supplier', type: Types::STRING, nullable: false)]
-    private string $supplier = '' {
-        get {
-            return $this->supplier;
-        }
-        set {
-            $this->supplier = $value;
-        }
+    private string $supplier = '';
+
+    public function getParcelTrackingDetails(): ?ParcelTrackingDetails
+    {
+        return $this->parcelTrackingDetails;
     }
 
-    public function getCustomer(): ?Customer
+    public function setParcelTrackingDetails(?ParcelTrackingDetails $parcelTrackingDetails): void
     {
-        return $this->customer;
+        $this->parcelTrackingDetails = $parcelTrackingDetails;
     }
 
-    public function setCustomer(?Customer $customer): self
+    public function getParcelId(): ?string
     {
-        $this->customer = $customer;
+        return $this->parcelId;
+    }
 
-        return $this;
+    public function setParcelId(?string $parcelId): void
+    {
+        $this->parcelId = $parcelId;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    public function getDimensions(): string
+    {
+        return $this->dimensions;
+    }
+
+    public function setDimensions(string $dimensions): void
+    {
+        $this->dimensions = $dimensions;
+    }
+
+    public function getWeight(): string
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(string $weight): void
+    {
+        $this->weight = $weight;
+    }
+
+    public function getDeliveryService(): string
+    {
+        return $this->deliveryService;
+    }
+
+    public function setDeliveryService(string $deliveryService): void
+    {
+        $this->deliveryService = $deliveryService;
+    }
+
+    public function getSupplier(): string
+    {
+        return $this->supplier;
+    }
+
+    public function setSupplier(string $supplier): void
+    {
+        $this->supplier = $supplier;
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function setId(?int $id): void
+    {
+        $this->id = $id;
     }
 
 }

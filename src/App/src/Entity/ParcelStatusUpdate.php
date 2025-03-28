@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Index;
+use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 
@@ -30,24 +31,10 @@ class ParcelStatusUpdate
     private int|null $id = null;
 
     #[Column(name: 'description', type: Types::STRING, nullable: false)]
-    private string $description = '' {
-        get {
-            return $this->description;
-        }
-        set {
-            $this->description = $value;
-        }
-    }
+    private string $description = '';
 
     #[Column(name: 'address', type: Types::STRING, nullable: false)]
-    private string $address = '' {
-        get {
-            return $this->address;
-        }
-        set {
-            $this->address = $value;
-        }
-    }
+    private string $address = '';
 
     #[Column(name: 'created_at', type: Types::DATE_IMMUTABLE, nullable: false, options: ["default" => "CURRENT_TIMESTAMP"])]
     private DateTimeImmutable $createdAt {
@@ -59,20 +46,44 @@ class ParcelStatusUpdate
         }
     }
 
-    #[ManyToOne(targetEntity: ParcelStatusUpdate::class, inversedBy: 'parcelStatusUpdates')]
-    private ParcelTrackingDetails $parcelTrackingDetails;
-
-
-    public function getParcelTrackingDetails(): ?ParcelTrackingDetails
+    public function getDescription(): string
     {
-        return $this->parcelTrackingDetails;
+        return $this->description;
     }
 
-    public function setParcelTrackingDetails(?ParcelTrackingDetails $parcelTrackingDetails): self
+    public function setDescription(string $description): void
     {
-        $this->parcelTrackingDetails = $parcelTrackingDetails;
+        $this->description = $description;
+    }
 
-        return $this;
+    public function getAddress(): string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(string $address): void
+    {
+        $this->address = $address;
+    }
+
+    public function getCreatedAt(): DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(DateTimeImmutable $createdAt): void
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function setId(?int $id): void
+    {
+        $this->id = $id;
     }
 
 }
