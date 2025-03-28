@@ -6,8 +6,8 @@ namespace App\Handler;
 
 use App\Entity\Parcel;
 use App\Entity\ParcelTrackingDetails;
+use App\Repository\ParcelRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Fig\Http\Message\StatusCodeInterface;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,23 +26,18 @@ readonly class ParcelTrackerResultsHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
+        $trackingNumber = $request->getParsedBody()['tracking_number'];
+
+        /** @var ParcelRepository $repository */
         $repository = $this->entityManager->getRepository(Parcel::class);
-        $parcelTrackingDetails = new ParcelTrackingDetails();
-        $parcelTrackingDetails->trackingId = $request->getParsedBody()['tracking_number'];
-
-        $parcel = $repository->findOneBy(
-            [
-                'parcelTrackingDetails' => $parcelTrackingDetails,
-            ]
-        );
-
-        if ($parcel === null) {
+        $parcelTrackingDetails = $repository->findTrackingDetailsByTrackingNumber($trackingNumber);
+        if ($parcelTrackingDetails === null) {
             return new RedirectResponse('/404');
         }
 
         return new HtmlResponse($this->renderer->render(
             'app::parcel-tracker-results',
-            ["parcel" => $parcel]
+            ["details" => $parcelTrackingDetails]
         ));
     }
 }
