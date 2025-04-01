@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
@@ -22,7 +24,7 @@ use function sprintf;
     columns: [
         "first_name",
         "last_name",
-        "address"
+        "address",
     ]
 )]
 class Customer
@@ -34,7 +36,8 @@ class Customer
 
     /**
      * Many customers have many parcels.
-     * @var Collection<int, Parcel>
+     *
+     * @var Collection<int,Parcel>
      */
     #[OneToMany(targetEntity: Parcel::class, mappedBy: "customer")]
     private Collection $parcels;
@@ -47,6 +50,10 @@ class Customer
 
     #[Column(name: 'address', type: Types::STRING, nullable: false)]
     private string $address = '';
+
+    public string $fullName {
+        get => sprintf("%s %s", $this->firstName, $this->lastName);
+    }
 
     public function __construct()
     {
@@ -74,10 +81,6 @@ class Customer
     public function setFirstName(string $firstName): void
     {
         $this->firstName = $firstName;
-    }
-
-    public string $fullName {
-        get => sprintf("%s %s", $this->firstName, $this->lastName);
     }
 
     public function getLastName(): string
@@ -109,6 +112,4 @@ class Customer
     {
         $this->id = $id;
     }
-
-
 }

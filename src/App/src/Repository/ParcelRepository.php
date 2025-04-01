@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityRepository;
 
 class ParcelRepository extends EntityRepository
 {
-
     /**
      * Attempt to find parcel tracking details for a product by the tracking number, e.g., 99VBZ546012301000945604
      */

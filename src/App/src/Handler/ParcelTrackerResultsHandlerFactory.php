@@ -10,9 +10,9 @@ use Psr\Container\ContainerInterface;
 
 class ParcelTrackerResultsHandlerFactory
 {
-    public function __invoke(ContainerInterface $container) : ParcelTrackerResultsHandler
+    public function __invoke(ContainerInterface $container): ParcelTrackerResultsHandler
     {
-        $renderer = $container->get(TemplateRendererInterface::class);
+        $renderer      = $container->get(TemplateRendererInterface::class);
         $entityManager = $container->get(EntityManager::class);
         return new ParcelTrackerResultsHandler($renderer, $entityManager);
     }

@@ -26,7 +26,7 @@ use Doctrine\ORM\Mapping\Table;
         "dimensions",
         "weight",
         "delivery_service",
-        "supplier"
+        "supplier",
     ]
 )]
 class Parcel
@@ -150,5 +150,4 @@ class Parcel
     {
         $this->customer = $customer;
     }
-
 }

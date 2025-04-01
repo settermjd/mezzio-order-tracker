@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\ParcelTrackingDetailsRepository;
@@ -41,6 +43,7 @@ class ParcelTrackingDetails
 
     /**
      * Many parcel tracking details have many parcel status updates.
+     *
      * @var Collection<int, ParcelStatusUpdate>
      */
     #[JoinTable(name: 'tracking_status_updates')]
@@ -93,5 +96,4 @@ class ParcelTrackingDetails
     {
         $this->parcelStatusUpdates = $parcelStatusUpdates;
     }
-
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use DateTimeImmutable;
@@ -9,8 +11,6 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Index;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 
 #[Entity]
@@ -20,7 +20,7 @@ use Doctrine\ORM\Mapping\Table;
     columns: [
         "description",
         "address",
-        "created_at"
+        "created_at",
     ]
 )]
 class ParcelStatusUpdate
@@ -36,11 +36,14 @@ class ParcelStatusUpdate
     #[Column(name: 'address', type: Types::STRING, nullable: false)]
     private string $address = '';
 
-    #[Column(name: 'created_at', type: Types::DATETIMETZ_IMMUTABLE, nullable: false, options: ["default" => "DATE(CURRENT_DATE, 'localtime')"])]
+    #[Column(
+        name: 'created_at',
+        type: Types::DATETIMETZ_IMMUTABLE,
+        nullable: false,
+        options: ["default" => "DATE(CURRENT_DATE, 'localtime')"]
+    )]
     private DateTimeImmutable $createdAt {
-        get {
-            return $this->createdAt;
-        }
+        get => $this->createdAt;
         set {
             $this->createdAt = $value;
         }
@@ -85,5 +88,4 @@ class ParcelStatusUpdate
     {
         $this->id = $id;
     }
-
 }
