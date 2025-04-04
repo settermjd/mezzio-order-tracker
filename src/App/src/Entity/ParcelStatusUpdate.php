@@ -27,7 +27,7 @@ class ParcelStatusUpdate
 {
     #[Id]
     #[Column(type: Types::INTEGER)]
-    #[GeneratedValue(strategy: 'IDENTITY')]
+    #[GeneratedValue(strategy: 'AUTO')]
     private int|null $id = null;
 
     #[Column(name: 'description', type: Types::STRING, nullable: false)]
@@ -40,7 +40,7 @@ class ParcelStatusUpdate
         name: 'created_at',
         type: Types::DATETIMETZ_IMMUTABLE,
         nullable: false,
-        options: ["default" => "DATE(CURRENT_DATE, 'localtime')"]
+        options: ["default" => "now"]
     )]
     private DateTimeImmutable $createdAt {
         get => $this->createdAt;

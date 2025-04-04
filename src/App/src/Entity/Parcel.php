@@ -33,11 +33,11 @@ class Parcel
 {
     #[Id]
     #[Column(type: Types::INTEGER)]
-    #[GeneratedValue(strategy: 'IDENTITY')]
+    #[GeneratedValue(strategy: 'AUTO')]
     private int|null $id = null;
 
     #[OneToOne(targetEntity: ParcelTrackingDetails::class, inversedBy: 'parcel')]
-    #[JoinColumn(name: 'parcel_tracking_id', referencedColumnName: 'id')]
+    #[JoinColumn(name: 'parcel_tracking_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
     private ParcelTrackingDetails|null $parcelTrackingDetails = null;
 
     #[Column(name: "parcel_id", type: Types::STRING, length: 12, nullable: false)]

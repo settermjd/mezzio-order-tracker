@@ -32,7 +32,7 @@ class ParcelTrackingDetails
 {
     #[Id]
     #[Column(type: Types::INTEGER)]
-    #[GeneratedValue(strategy: 'IDENTITY')]
+    #[GeneratedValue(strategy: 'AUTO')]
     private int|null $id = null;
 
     #[Column(name: 'tracking_number', type: Types::STRING, length: 24, nullable: false)]
@@ -47,10 +47,10 @@ class ParcelTrackingDetails
      * @var Collection<int, ParcelStatusUpdate>
      */
     #[JoinTable(name: 'tracking_status_updates')]
-    #[JoinColumn(name: 'tracking_id', referencedColumnName: 'id')]
+    #[JoinColumn(name: 'tracking_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[InverseJoinColumn(name: 'status_update_id', referencedColumnName: 'id', unique: true)]
-    #[ManyToMany(targetEntity: ParcelStatusUpdate::class)]
-    private Collection|null $parcelStatusUpdates = null;
+    #[ManyToMany(targetEntity: ParcelStatusUpdate::class, cascade: ['persist'], orphanRemoval: true)]
+    private Collection|null $parcelStatusUpdates;
 
     public function __construct()
     {

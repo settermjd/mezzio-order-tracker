@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Index;
+use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
 
@@ -31,7 +32,7 @@ class Customer
 {
     #[Id]
     #[Column(type: Types::INTEGER)]
-    #[GeneratedValue(strategy: 'IDENTITY')]
+    #[GeneratedValue(strategy: 'AUTO')]
     private int|null $id = null;
 
     /**
@@ -40,6 +41,7 @@ class Customer
      * @var Collection<int,Parcel>
      */
     #[OneToMany(targetEntity: Parcel::class, mappedBy: "customer")]
+    #[JoinColumn(name: 'customer_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
     private Collection $parcels;
 
     #[Column(name: 'first_name', type: Types::STRING, nullable: false)]
@@ -47,6 +49,12 @@ class Customer
 
     #[Column(name: 'last_name', type: Types::STRING, nullable: false)]
     private string $lastName = '';
+
+    #[Column(name: 'phone_number', type: Types::STRING, nullable: true)]
+    private string $phoneNumber = '';
+
+    #[Column(name: 'email_address', type: Types::STRING, nullable: true)]
+    private string $emailAddress = '';
 
     #[Column(name: 'address', type: Types::STRING, nullable: false)]
     private string $address = '';
@@ -112,4 +120,25 @@ class Customer
     {
         $this->id = $id;
     }
+
+    public function getPhoneNumber(): string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(string $phoneNumber): void
+    {
+        $this->phoneNumber = $phoneNumber;
+    }
+
+    public function getEmailAddress(): string
+    {
+        return $this->emailAddress;
+    }
+
+    public function setEmailAddress(string $emailAddress): void
+    {
+        $this->emailAddress = $emailAddress;
+    }
+
 }
