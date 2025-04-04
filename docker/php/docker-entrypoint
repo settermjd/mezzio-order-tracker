@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+set -Eeo pipefail
+
+# This is a small script, virtually verbatim taken from https://github.com/docker-library/postgres/blob/cc254e85ed86e1f8c9052f9cbf0e3320324f0421/docker-entrypoint.sh#L9
+# It creates environment variables to store the value of existing environment variables that have
+# been set using Docker Secrets, i.e., using secrets files.
+
+file_env() {
+  # The shell variable to store the Docker Secret in
+  local var="$1"
+
+  # The shell variable to retrieve the Docker Secret for
+  local fileVar="${var}_FILE"
+
+  if [ "${!var:-}" ] && [ "${!fileVar:-}" ]; then
+    printf >&2 'error: both %s and %s are set\n' "$var" "$fileVar"
+    exit 1
+  fi
+
+  if [ "${!fileVar:-}" ]; then
+    val="$(< "${!fileVar}")"
+  fi
+
+  printf >&2 'exporting %s\n' "$var"
+  export "$var"="$val"
+  unset "$fileVar"
+}
+
+# check to see if this file is being run or sourced from another script
+_is_sourced() {
+  # https://unix.stackexchange.com/a/215279
+  [ "${#FUNCNAME[@]}" -ge 2 ] \
+    && [ "${FUNCNAME[0]}" = '_is_sourced' ] \
+    && [ "${FUNCNAME[1]}" = 'source' ]
+}
+
+_main() {
+  # Create a new environment variable named DB_PASSWORD from an existing one named DB_PASSWORD_FILE,
+  # if it exists
+  file_env DB_PASSWORD
+
+  # first arg is `-f` or `--some-option`
+  if [ "${1#-}" != "$1" ]; then
+    set -- apache2-foreground "$@"
+  fi
+
+  exec "$@"
+}
+
+if ! _is_sourced; then
+  _main "$@"
+fi
