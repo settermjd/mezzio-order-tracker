@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Doctrine\DBAL\Driver\PDO\SQLite\Driver;
+use Doctrine\DBAL\Driver\PDO\PgSQL\Driver;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 
 return [
@@ -11,7 +11,12 @@ return [
             'orm_default' => [
                 'driver_class' => Driver::class,
                 'params'       => [
-                    'path' => __DIR__ . '/../../data/database/db.sqlite',
+                    //'path' => __DIR__ . '/../../data/database/db.sqlite',
+                    'dbname'   => $_ENV['DB_NAME'],
+                    'host'     => $_ENV['DB_HOST'],
+                    'password' => $_ENV['DB_PASSWORD'],
+                    'port'     => '5432',
+                    'user'     => $_ENV['DB_USER'],
                 ],
             ],
         ],
