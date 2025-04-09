@@ -39,6 +39,6 @@ services:
       POSTGRES_PASSWORD_FILE: /run/secrets/db_password
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - database_data:/var/lib/postgresql/data
+      - database_data:/var/lib/postgresql/data/pgdata
     secrets:
       - db_password
