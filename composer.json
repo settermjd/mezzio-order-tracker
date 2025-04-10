@@ -46,24 +46,30 @@
         "laminas/laminas-component-installer": "^2.6 || ^3.5",
         "laminas/laminas-config-aggregator": "^1.18",
         "laminas/laminas-diactoros": "^3.5.0",
+        "laminas/laminas-eventmanager": "^3.14",
         "laminas/laminas-servicemanager": "^3.22",
         "laminas/laminas-stdlib": "^3.20",
         "mezzio/mezzio": "^3.20.1",
         "mezzio/mezzio-fastroute": "^3.11.0",
         "mezzio/mezzio-helpers": "^5.17",
         "mezzio/mezzio-twigrenderer": "^2.15",
+        "monolog/monolog": "^3.9",
         "ph-7/just-http-status-codes": "^1.1",
-        "skar/laminas-doctrine-orm": "^0.2.0"
+        "sendgrid/sendgrid": "^8.1",
+        "skar/laminas-doctrine-orm": "^0.2.0",
+        "twilio/sdk": "^8.4",
+        "vlucas/phpdotenv": "^5.6"
     },
     "require-dev": {
+        "filp/whoops": "^2.15.4",
+        "friendsofphp/php-cs-fixer": "^3.75",
         "laminas/laminas-coding-standard": "~2.5.0",
         "laminas/laminas-development-mode": "^3.13.0",
         "mezzio/mezzio-tooling": "^2.10.1",
         "phpunit/phpunit": "^10.5.45",
         "psalm/plugin-phpunit": "^0.19.2",
         "roave/security-advisories": "dev-master",
-        "vimeo/psalm": "^6.8.8",
-        "filp/whoops": "^2.15.4"
+        "vimeo/psalm": "^6.8.8"
     },
     "conflict": {
         "amphp/dns": "<2.4.0",
