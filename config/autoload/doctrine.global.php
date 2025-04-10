@@ -7,6 +7,13 @@ use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 
 return [
     'doctrine' => [
+        'dbal'          => [
+            'connections' => [
+                'default' => [
+                    'logging' => true,
+                ],
+            ],
+        ],
         'connection'    => [
             'orm_default' => [
                 'driver_class' => Driver::class,
