@@ -27,15 +27,17 @@ readonly class ParcelTrackerResultsHandler implements RequestHandlerInterface
         $trackingNumber = $request->getParsedBody()['tracking_number'];
 
         /** @var ParcelRepository $repository */
-        $repository            = $this->entityManager->getRepository(Parcel::class);
-        $parcelTrackingDetails = $repository->findTrackingDetailsByTrackingNumber($trackingNumber);
-        if ($parcelTrackingDetails === null) {
+        $repository = $this->entityManager->getRepository(Parcel::class);
+        $parcel     = $repository->findByTrackingNumber($trackingNumber);
+        if (! $parcel instanceof Parcel) {
             return new RedirectResponse('/404');
         }
 
         return new HtmlResponse($this->renderer->render(
             'app::parcel-tracker-results',
-            ["details" => $parcelTrackingDetails]
+            [
+                "parcel" => $parcel,
+            ]
         ));
     }
 }
