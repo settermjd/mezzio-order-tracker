@@ -5,25 +5,33 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Customer;
+use App\Entity\Parcel;
 use App\Entity\ParcelTrackingDetails;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 
 class ParcelRepository extends EntityRepository
 {
     /**
      * Attempt to find parcel tracking details for a product by the tracking number, e.g., 99VBZ546012301000945604
      */
-    public function findTrackingDetailsByTrackingNumber(string $trackingNumber): ?ParcelTrackingDetails
+    public function findByTrackingNumber(string $trackingNumber): Parcel|null
     {
         $query = $this->getEntityManager()
-            ->createQuery(
-                "SELECT ptd 
-                FROM App\Entity\Parcel p 
-                INNER JOIN App\Entity\ParcelTrackingDetails ptd
-                WHERE ptd.trackingNumber = :trackingNumber"
-            )->setParameter('trackingNumber', $trackingNumber);
+            ->createQueryBuilder()
+            ->select('p')
+            ->from(Parcel::class, 'p')
+            ->where('ptd.trackingNumber = :trackingNumber')
+            ->leftJoin(
+                join: ParcelTrackingDetails::class,
+                alias: 'ptd',
+                conditionType: Join::WITH,
+                condition: 'ptd.id = p.parcelTrackingDetails'
+            )
+            ->setParameter('trackingNumber', $trackingNumber);
 
-        return $query->getOneOrNullResult();
+        return $query->getQuery()
+                    ->getOneOrNullResult();
     }
 
     public function findCustomer(): ?Customer
