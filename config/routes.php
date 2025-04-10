@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Mezzio\Application;
+use Mezzio\Handler\NotFoundHandler;
 use Mezzio\MiddlewareFactory;
 use Psr\Container\ContainerInterface;
 
@@ -38,8 +39,9 @@ use Psr\Container\ContainerInterface;
  */
 
 return static function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
-    $app->get('/', App\Handler\HomePageHandler::class, 'home');
-    $app->get('/404', \Mezzio\Handler\NotFoundHandler::class, '404.not.found');
-    $app->post('/parcel', App\Handler\ParcelTrackerResultsHandler::class, 'tracker.process');
+    $app->get('/', App\Handler\HomePageHandler::class, 'parcel.search.form');
+    $app->post('/search', App\Handler\ParcelTrackerResultsHandler::class, 'parcel.search');
+    $app->post('/parcel', App\Handler\AddParcelHandler::class, 'parcel.add');
+    $app->get('/404', NotFoundHandler::class, '404.not.found');
     $app->get('/api/ping', App\Handler\PingHandler::class, 'api.ping');
 };
