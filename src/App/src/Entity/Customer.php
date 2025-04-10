@@ -53,7 +53,7 @@ class Customer
     #[Column(name: 'phone_number', type: Types::STRING, nullable: true)]
     private string $phoneNumber = '';
 
-    #[Column(name: 'email_address', type: Types::STRING, nullable: true)]
+    #[Column(name: 'email_address', type: Types::STRING, unique: true, nullable: true)]
     private string $emailAddress = '';
 
     #[Column(name: 'address', type: Types::STRING, nullable: false)]

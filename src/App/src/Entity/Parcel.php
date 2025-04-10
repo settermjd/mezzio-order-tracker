@@ -40,7 +40,7 @@ class Parcel
     #[JoinColumn(name: 'parcel_tracking_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
     private ParcelTrackingDetails|null $parcelTrackingDetails = null;
 
-    #[Column(name: "parcel_id", type: Types::STRING, length: 12, nullable: false)]
+    #[Column(name: "parcel_id", type: Types::STRING, length: 12, unique: true, nullable: false)]
     private string|null $parcelId = null;
 
     #[ManyToOne(targetEntity: Customer::class, inversedBy: 'parcels')]

@@ -35,7 +35,7 @@ class ParcelTrackingDetails
     #[GeneratedValue(strategy: 'AUTO')]
     private int|null $id = null;
 
-    #[Column(name: 'tracking_number', type: Types::STRING, length: 24, nullable: false)]
+    #[Column(name: 'tracking_number', type: Types::STRING, length: 24, unique: true, nullable: false)]
     public string $trackingNumber = '';
 
     #[OneToOne(targetEntity: Parcel::class, mappedBy: 'parcelTrackingDetails')]
@@ -47,8 +47,8 @@ class ParcelTrackingDetails
      * @var Collection<int, ParcelStatusUpdate>
      */
     #[JoinTable(name: 'tracking_status_updates')]
-    #[JoinColumn(name: 'tracking_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[InverseJoinColumn(name: 'status_update_id', referencedColumnName: 'id', unique: true)]
+    #[JoinColumn(name: 'tracking_id', referencedColumnName: 'id', onDelete: 'RESTRICT')]
+    #[InverseJoinColumn(name: 'status_update_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
     #[ManyToMany(targetEntity: ParcelStatusUpdate::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection|null $parcelStatusUpdates;
 
