@@ -5,6 +5,12 @@ volumes:
 secrets:
   db_password:
     environment: DB_PASSWORD
+  sendgrid_api_key:
+    environment: SENDGRID_API_KEY
+  twilio_account_sid:
+    environment: TWILIO_ACCOUNT_SID
+  twilio_auth_token:
+    environment: TWILIO_AUTH_TOKEN
 
 services:
   php:
@@ -28,14 +34,17 @@ services:
       DB_USER: "${DB_USER}"
       LOGGER_LOCATION: "${LOGGER_LOCATION}"
       LOGGER_NAME: "${LOGGER_NAME}"
-      SENDGRID_API_KEY: "${SENDGRID_API_KEY}"
+      SENDGRID_API_KEY_FILE: /run/secrets/sendgrid_api_key
       SENDGRID_SENDER_EMAIL: "${SENDGRID_SENDER_EMAIL}"
       SENDGRID_SENDER_NAME: "${SENDGRID_SENDER_NAME}"
-      TWILIO_ACCOUNT_SID: "${TWILIO_ACCOUNT_SID}"
-      TWILIO_AUTH_TOKEN: "${TWILIO_AUTH_TOKEN}"
+      TWILIO_ACCOUNT_SID_FILE: /run/secrets/twilio_account_sid
+      TWILIO_AUTH_TOKEN_FILE: /run/secrets/twilio_auth_token
       TWILIO_PHONE_NUMBER: "${TWILIO_PHONE_NUMBER}"
     secrets:
       - db_password
+      - sendgrid_api_key
+      - twilio_account_sid
+      - twilio_auth_token
 
   database:
     image: postgres:17.4-alpine3.21
