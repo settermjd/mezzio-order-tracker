@@ -40,6 +40,7 @@ services:
       TWILIO_ACCOUNT_SID_FILE: /run/secrets/twilio_account_sid
       TWILIO_AUTH_TOKEN_FILE: /run/secrets/twilio_auth_token
       TWILIO_PHONE_NUMBER: "${TWILIO_PHONE_NUMBER}"
+      TWILIO_WHATSAPP_NUMBER: "${TWILIO_WHATSAPP_NUMBER}"
     secrets:
       - db_password
       - sendgrid_api_key
