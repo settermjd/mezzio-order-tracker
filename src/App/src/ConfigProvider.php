@@ -79,9 +79,11 @@ class ConfigProvider
                 LoggerInterface::class                     => new class {
                     public function __invoke(ContainerInterface $container): LoggerInterface
                     {
-                        return new Logger('app.logger')
+                        $config = $container->get('config')['logger'] ?? [];
+
+                        return new Logger($config['name'])
                             ->pushHandler(new StreamHandler(
-                                __DIR__ . "/../../../data/log/app.log",
+                                __DIR__ . $config['location'],
                                 Level::Debug
                             ));
                     }
