@@ -36,9 +36,11 @@ _is_sourced() {
 }
 
 _main() {
-  # Create a new environment variable named DB_PASSWORD from an existing one named DB_PASSWORD_FILE,
-  # if it exists
+  # Create environment variables from the ones set from Docker Secrets
   file_env DB_PASSWORD
+  file_env SENDGRID_API_KEY
+  file_env TWILIO_ACCOUNT_SID
+  file_env TWILIO_AUTH_TOKEN
 
   # first arg is `-f` or `--some-option`
   if [ "${1#-}" != "$1" ]; then
