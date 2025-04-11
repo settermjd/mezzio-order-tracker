@@ -53,6 +53,9 @@ class Customer
     #[Column(name: 'phone_number', type: Types::STRING, nullable: true)]
     private string $phoneNumber = '';
 
+    #[Column(name: 'whatsapp_number', type: Types::STRING, nullable: true)]
+    private string $whatsAppNumber = '';
+
     #[Column(name: 'email_address', type: Types::STRING, unique: true, nullable: true)]
     private string $emailAddress = '';
 
@@ -129,6 +132,16 @@ class Customer
     public function setPhoneNumber(string $phoneNumber): void
     {
         $this->phoneNumber = $phoneNumber;
+    }
+
+    public function getWhatsAppNumber(): string
+    {
+        return $this->whatsAppNumber;
+    }
+
+    public function setWhatsAppNumber(string $whatsAppNumber): void
+    {
+        $this->whatsAppNumber = $whatsAppNumber;
     }
 
     public function getEmailAddress(): string
