@@ -70,9 +70,11 @@ class ConfigProvider
                 Client::class                              => new class {
                     public function __invoke(ContainerInterface $container): Client
                     {
+                        $config = $container->get('config')['twilio'] ?? [];
+
                         return new Client(
-                            username: $_ENV['TWILIO_ACCOUNT_SID'],
-                            password: $_ENV['TWILIO_AUTH_TOKEN'],
+                            username: $config['account_sid'],
+                            password: $config['auth_token'],
                         );
                     }
                 },
@@ -105,9 +107,6 @@ class ConfigProvider
                         $twilioConfig = $container->get('config')['twilio'];
                         assert(is_array($twilioConfig));
 
-                        $sendGridConfig = $container->get('config')['sendgrid'];
-                        assert(is_array($sendGridConfig));
-
                         $eventManager->attach(
                             eventName: AddParcelHandler::EVENT_NAME,
                             listener: new NewParcelLoggerListener($logger),
@@ -123,10 +122,13 @@ class ConfigProvider
                             priority: 70,
                         );
 
+                        $sendGridConfig = $container->get('config')['sendgrid'];
+                        assert(is_array($sendGridConfig));
+
                         $eventManager->attach(
                             eventName: AddParcelHandler::EVENT_NAME,
                             listener: new NewParcelCreatedEmailNotificationListener(
-                                new SendGrid($_ENV['SENDGRID_API_KEY']),
+                                new SendGrid($sendGridConfig['api_key']),
                                 new Mail(),
                                 $logger,
                                 $sendGridConfig
