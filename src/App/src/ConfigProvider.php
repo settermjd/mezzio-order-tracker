@@ -6,7 +6,9 @@ namespace App;
 
 use App\EventManager\Listeners\AddNewParcel\NewParcelCreatedEmailNotificationListener;
 use App\EventManager\Listeners\AddNewParcel\NewParcelCreatedSMSNotificationListener;
+use App\EventManager\Listeners\AddNewParcel\NewParcelCreatedWhatsAppNotificationListener;
 use App\EventManager\Listeners\AddNewParcel\NewParcelLoggerListener;
+use App\Handler\AddParcelHandler;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\EventManager\EventManager;
@@ -19,7 +21,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use SendGrid;
 use SendGrid\Mail\Mail;
-use Twilio\Rest\Client;
+use Twilio\Rest\Client as TwilioRestClient;
 
 use function assert;
 use function is_array;
@@ -57,7 +59,7 @@ class ConfigProvider
             'factories'  => [
                 Handler\HomePageHandler::class             => Handler\HomePageHandlerFactory::class,
                 Handler\ParcelTrackerResultsHandler::class => Handler\ParcelTrackerResultsHandlerFactory::class,
-                Handler\AddParcelHandler::class            => ReflectionBasedAbstractFactory::class,
+                AddParcelHandler::class                    => ReflectionBasedAbstractFactory::class,
                 Service\ParcelService::class               => new class {
                     public function __invoke(ContainerInterface $container): Service\ParcelService
                     {
@@ -67,12 +69,12 @@ class ConfigProvider
                         return new Service\ParcelService($entityManager);
                     }
                 },
-                Client::class                              => new class {
-                    public function __invoke(ContainerInterface $container): Client
+                TwilioRestClient::class                    => new class {
+                    public function __invoke(ContainerInterface $container): TwilioRestClient
                     {
                         $config = $container->get('config')['twilio'] ?? [];
 
-                        return new Client(
+                        return new TwilioRestClient(
                             username: $config['account_sid'],
                             password: $config['auth_token'],
                         );
@@ -101,8 +103,8 @@ class ConfigProvider
                         $entityManager = $container->get(EntityManager::class);
                         assert($entityManager instanceof EntityManagerInterface);
 
-                        $twilioClient = $container->get(Client::class);
-                        assert($twilioClient instanceof Client);
+                        $twilioClient = $container->get(TwilioRestClient::class);
+                        assert($twilioClient instanceof TwilioRestClient);
 
                         $twilioConfig = $container->get('config')['twilio'];
                         assert(is_array($twilioConfig));
@@ -117,7 +119,18 @@ class ConfigProvider
                             eventName: AddParcelHandler::EVENT_NAME,
                             listener: new NewParcelCreatedSMSNotificationListener(
                                 $twilioClient,
-                                $twilioConfig
+                                $twilioConfig,
+                                $logger,
+                            ),
+                            priority: 70,
+                        );
+
+                        $eventManager->attach(
+                            eventName: AddParcelHandler::EVENT_NAME,
+                            listener: new NewParcelCreatedWhatsAppNotificationListener(
+                                $twilioClient,
+                                $twilioConfig,
+                                $logger,
                             ),
                             priority: 70,
                         );
