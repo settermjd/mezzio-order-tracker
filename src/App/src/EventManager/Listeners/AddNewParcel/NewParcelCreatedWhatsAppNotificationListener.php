@@ -10,7 +10,7 @@ use Twilio\Exceptions\TwilioException;
 use function array_key_exists;
 use function sprintf;
 
-readonly class NewParcelCreatedSMSNotificationListener extends NewParcelCreatedTwilioNotificationListener
+readonly class NewParcelCreatedWhatsAppNotificationListener extends NewParcelCreatedTwilioNotificationListener
 {
     public const string MESSAGE_TEMPLATE = <<<EOF
 Your parcel (%s) from %s is being tracked with tracking number %s. 
@@ -20,11 +20,11 @@ EOF;
     public function sendNotification(Parcel $parcel): void
     {
         if (
-            ! array_key_exists('phone_number', $this->twilioConfig)
-            || $this->twilioConfig['phone_number'] === ''
+            ! array_key_exists('whatsapp_number', $this->twilioConfig)
+            || $this->twilioConfig['whatsapp_number'] === ''
         ) {
             $this->logger->debug(
-                'Cannot send a new parcel SMS notification. A Twilio phone number has not been set.',
+                'Cannot send a new parcel WhatsApp notification. A Twilio WhatsApp number has not been set.',
                 [
                     'id' => $parcel->getId(),
                 ]
@@ -32,10 +32,10 @@ EOF;
             return;
         }
 
-        $phoneNumber = $parcel->getCustomer()->getPhoneNumber();
-        if ($phoneNumber === '') {
+        $number = $parcel->getCustomer()->getWhatsAppNumber();
+        if ($number === '') {
             $this->logger->debug(
-                'Cannot send a new parcel SMS notification. The customer does not have a phone number.',
+                'Cannot send a new parcel WhatsApp notification. The customer does not have a WhatsApp number.',
                 [
                     'id' => $parcel->getId(),
                 ]
@@ -47,7 +47,7 @@ EOF;
             $this->twilioClient
                 ->messages
                 ->create(
-                    $phoneNumber,
+                    "whatsapp:{$number}",
                     [
                         "body" => sprintf(
                             self::MESSAGE_TEMPLATE,
@@ -58,26 +58,26 @@ EOF;
                                 ->getTrackingNumber(),
                             $parcel->getDeliveryService(),
                         ),
-                        "from" => $this->twilioConfig['phone_number'],
+                        "from" => "whatsapp:{$this->twilioConfig['whatsapp_number']}",
                     ]
                 );
         } catch (TwilioException $e) {
             $this->logger->error(
-                'Failed to send a new parcel SMS notification',
+                'Failed to send a new parcel WhatsApp notification',
                 [
                     'error' => $e->getMessage(),
-                    'from'  => $this->twilioConfig['whatsapp_number'],
+                    'from'  => "whatsapp:{$this->twilioConfig['whatsapp_number']}",
                     'id'    => $parcel->getId(),
-                    'to'    => $phoneNumber,
+                    'to'    => "whatsapp:{$number}",
                 ]
             );
             return;
         }
 
-        $this->logger->info('New parcel SMS notification sent', [
+        $this->logger->info('New parcel WhatsApp notification sent', [
             'id'              => $parcel->getId(),
-            'recipient'       => $phoneNumber,
-            'sender'          => $this->twilioConfig['phone_number'],
+            'recipient'       => "whatsapp:{$number}",
+            'sender'          => "whatsapp:{$this->twilioConfig['whatsapp_number']}",
             'tracking_number' => $parcel->getParcelTrackingDetails()->getTrackingNumber(),
         ]);
     }
