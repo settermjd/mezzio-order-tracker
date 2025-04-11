@@ -21,6 +21,8 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 readonly class AddParcelHandler implements RequestHandlerInterface
 {
+    public const string EVENT_NAME = 'newParcel';
+
     public function __construct(
         private ParcelService $parcelService,
         private EventManagerInterface $eventManager,

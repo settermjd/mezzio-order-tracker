@@ -107,13 +107,13 @@ class ConfigProvider
                         assert(is_array($sendGridConfig));
 
                         $eventManager->attach(
-                            eventName: 'newParcel',
+                            eventName: AddParcelHandler::EVENT_NAME,
                             listener: new NewParcelLoggerListener($logger),
                             priority: 100,
                         );
 
                         $eventManager->attach(
-                            eventName: 'newParcel',
+                            eventName: AddParcelHandler::EVENT_NAME,
                             listener: new NewParcelCreatedSMSNotificationListener(
                                 $twilioClient,
                                 $twilioConfig
@@ -122,7 +122,7 @@ class ConfigProvider
                         );
 
                         $eventManager->attach(
-                            eventName: 'newParcel',
+                            eventName: AddParcelHandler::EVENT_NAME,
                             listener: new NewParcelCreatedEmailNotificationListener(
                                 new SendGrid($_ENV['SENDGRID_API_KEY']),
                                 new Mail(),
