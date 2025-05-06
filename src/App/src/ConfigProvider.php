@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\EventManager\Listeners;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\EventManager\EventManager;
@@ -64,15 +65,22 @@ class ConfigProvider
                 Handler\UpdateParcelStatusHandler::class => ReflectionBasedAbstractFactory::class,
                 Handler\ViewParcelDetailsHandler::class  => Handler\ParcelTrackerResultsHandlerFactory::class,
 
-                /**
-                 * Register the listeners
-                 */
-                LoggerListener::class => ReflectionBasedAbstractFactory::class,
+                EventManagerInterface::class => ReflectionBasedAbstractFactory::class,
 
-                /**
-                 * Register the services
-                 */
-                Service\ParcelService::class               => new class {
+                LoggerInterface::class                                => new class {
+                    public function __invoke(ContainerInterface $container): LoggerInterface
+                    {
+                        $config = $container->get('config')['logger'] ?? [];
+
+                        return new Logger($config['name'])
+                            ->pushHandler(new StreamHandler(
+                                __DIR__ . $config['location'],
+                                Level::Debug,
+                            ));
+                    }
+                },
+
+                Service\ParcelService::class                          => new class {
                     public function __invoke(ContainerInterface $container): Service\ParcelService
                     {
                         $entityManager = $container->get(EntityManager::class);
@@ -81,7 +89,8 @@ class ConfigProvider
                         return new Service\ParcelService($entityManager);
                     }
                 },
-                TwilioRestClient::class                    => new class {
+                
+                TwilioRestClient::class                               => new class {
                     public function __invoke(ContainerInterface $container): TwilioRestClient
                     {
                         $config = $container->get('config')['twilio'] ?? [];
@@ -92,76 +101,75 @@ class ConfigProvider
                         );
                     }
                 },
-                LoggerInterface::class                     => new class {
-                    public function __invoke(ContainerInterface $container): LoggerInterface
-                    {
-                        $config = $container->get('config')['logger'] ?? [];
 
-                        return new Logger($config['name'])
-                            ->pushHandler(new StreamHandler(
-                                __DIR__ . $config['location'],
-                                Level::Debug
-                            ));
+                Listeners\LoggerListener::class => ReflectionBasedAbstractFactory::class,
+
+                Listeners\ParcelAdded\Twilio\SMSNotificationListener::class               => new class {
+                    public function __invoke(ContainerInterface $container): Listeners\ParcelAdded\Twilio\SMSNotificationListener
+                    {
+                        return new Listeners\ParcelAdded\Twilio\SMSNotificationListener(
+                            $container->get(TwilioRestClient::class),
+                            $container->get('config')['twilio'],
+                            $container->get(Listeners\LoggerListener::class),
+                        );
                     }
                 },
-                EventManagerInterface::class               => new class {
-                    public function __invoke(ContainerInterface $container): EventManagerInterface
+                Listeners\ParcelAdded\Twilio\WhatsAppNotificationListener::class          => new class {
+                    public function __invoke(ContainerInterface $container): Listeners\ParcelAdded\Twilio\WhatsAppNotificationListener
                     {
-                        $eventManager = new EventManager();
-
-                        $logger = $container->get(LoggerInterface::class);
-                        assert($logger instanceof LoggerInterface);
-
-                        $entityManager = $container->get(EntityManager::class);
-                        assert($entityManager instanceof EntityManagerInterface);
-
-                        $twilioClient = $container->get(TwilioRestClient::class);
-                        assert($twilioClient instanceof TwilioRestClient);
-
-                        $twilioConfig = $container->get('config')['twilio'];
-                        assert(is_array($twilioConfig));
-
-                        $eventManager->attach(
-                            eventName: AddParcelHandler::EVENT_NAME,
-                            listener: new NewParcelLoggerListener($logger),
-                            priority: 100,
+                        return new Listeners\ParcelAdded\Twilio\WhatsAppNotificationListener(
+                            $container->get(TwilioRestClient::class),
+                            $container->get('config')['twilio'],
+                            $container->get(Listeners\LoggerListener::class),
                         );
-
-                        $eventManager->attach(
-                            eventName: AddParcelHandler::EVENT_NAME,
-                            listener: new NewParcelCreatedSMSNotificationListener(
-                                $twilioClient,
-                                $twilioConfig,
-                                $logger,
-                            ),
-                            priority: 70,
+                    }
+                },
+                Listeners\ParcelStatusUpdate\Twilio\SMSNotificationListener::class      => new class {
+                    public function __invoke(ContainerInterface $container): Listeners\ParcelStatusUpdate\Twilio\SMSNotificationListener
+                    {
+                        return new Listeners\ParcelStatusUpdate\Twilio\SMSNotificationListener(
+                            $container->get(TwilioRestClient::class),
+                            $container->get('config')['twilio'],
+                            $container->get(Listeners\LoggerListener::class),
                         );
-
-                        $eventManager->attach(
-                            eventName: AddParcelHandler::EVENT_NAME,
-                            listener: new NewParcelCreatedWhatsAppNotificationListener(
-                                $twilioClient,
-                                $twilioConfig,
-                                $logger,
-                            ),
-                            priority: 70,
+                    }
+                },
+                Listeners\ParcelStatusUpdate\Twilio\WhatsAppNotificationListener::class => new class {
+                    public function __invoke(ContainerInterface $container): Listeners\ParcelStatusUpdate\Twilio\WhatsAppNotificationListener
+                    {
+                        return new Listeners\ParcelStatusUpdate\Twilio\WhatsAppNotificationListener(
+                            $container->get(TwilioRestClient::class),
+                            $container->get('config')['twilio'],
+                            $container->get(Listeners\LoggerListener::class),
                         );
-
+                    }
+                },
+                Listeners\ParcelAdded\SendGrid\EmailNotificationListener::class           => new class {
+                    public function __invoke(ContainerInterface $container): Listeners\ParcelAdded\SendGrid\EmailNotificationListener
+                    {
                         $sendGridConfig = $container->get('config')['sendgrid'];
                         assert(is_array($sendGridConfig));
 
-                        $eventManager->attach(
-                            eventName: AddParcelHandler::EVENT_NAME,
-                            listener: new NewParcelCreatedEmailNotificationListener(
-                                new SendGrid($sendGridConfig['api_key']),
-                                new Mail(),
-                                $logger,
-                                $sendGridConfig
-                            ),
-                            priority: 70,
+                        return new Listeners\ParcelAdded\SendGrid\EmailNotificationListener(
+                            new SendGrid($sendGridConfig['api_key']),
+                            new Mail(),
+                            $container->get(Listeners\LoggerListener::class),
+                            $container->get('config')['sendgrid'],
                         );
+                    }
+                },
+                Listeners\ParcelStatusUpdate\SendGrid\EmailNotificationListener::class    => new class {
+                    public function __invoke(ContainerInterface $container): Listeners\ParcelStatusUpdate\SendGrid\EmailNotificationListener
+                    {
+                        $sendGridConfig = $container->get('config')['sendgrid'];
+                        assert(is_array($sendGridConfig));
 
-                        return $eventManager;
+                        return new Listeners\ParcelStatusUpdate\SendGrid\EmailNotificationListener(
+                            new SendGrid($sendGridConfig['api_key']),
+                            new Mail(),
+                            $container->get(Listeners\LoggerListener::class),
+                            $container->get('config')['sendgrid'],
+                        );
                     }
                 },
             ],
