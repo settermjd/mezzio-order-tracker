@@ -35,11 +35,13 @@ readonly class AddParcelHandler implements RequestHandlerInterface
         $requestData = $request->getParsedBody() ?? [];
         $parcel      = $this->parcelService->addParcel($requestData);
 
-        $this->eventManager->trigger(eventName: 'newParcel', argv: ['parcel' => $parcel]);
+        $this->eventManager->trigger(eventName: self::EVENT_NAME, argv: ['parcel' => $parcel]);
 
         return new JsonResponse(
             [
-                'status' => 'queued',
+                'status'  => 'success',
+                'message' => 'New parcel request received',
+                'details' => $requestData,
             ],
             StatusCodeInterface::STATUS_ACCEPTED
         );
