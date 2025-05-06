@@ -14,7 +14,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-readonly class ParcelTrackerResultsHandler implements RequestHandlerInterface
+readonly class ViewParcelDetailsHandler implements RequestHandlerInterface
 {
     public function __construct(
         private TemplateRendererInterface $renderer,
@@ -24,17 +24,17 @@ readonly class ParcelTrackerResultsHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $trackingNumber = $request->getParsedBody()['tracking_number'];
+        $postData = (array) $request->getParsedBody();
 
         /** @var ParcelRepository $repository */
         $repository = $this->entityManager->getRepository(Parcel::class);
-        $parcel     = $repository->findByTrackingNumber($trackingNumber);
+        $parcel     = $repository->findByTrackingNumber($postData['tracking_number']);
         if (! $parcel instanceof Parcel) {
             return new RedirectResponse('/404');
         }
 
         return new HtmlResponse($this->renderer->render(
-            'app::parcel-tracker-results',
+            'app::view-parcel-details',
             [
                 "parcel" => $parcel,
             ]
