@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\EventManager\Listeners\AddNewParcel\NewParcelCreatedEmailNotificationListener;
-use App\EventManager\Listeners\AddNewParcel\NewParcelCreatedSMSNotificationListener;
-use App\EventManager\Listeners\AddNewParcel\NewParcelCreatedWhatsAppNotificationListener;
-use App\EventManager\Listeners\AddNewParcel\NewParcelLoggerListener;
-use App\Handler\AddParcelHandler;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Laminas\EventManager\EventManager;
@@ -38,6 +33,8 @@ class ConfigProvider
      *
      * To add a bit of a structure, each section is defined in a separate
      * method which returns an array with its configuration.
+     *
+     * @return array<string,array<string,array<string,string|callable>>>
      */
     public function __invoke(): array
     {
@@ -49,6 +46,8 @@ class ConfigProvider
 
     /**
      * Returns the container dependencies
+     *
+     * @return array<string,array<string,string|callable>>
      */
     public function getDependencies(): array
     {
@@ -57,9 +56,22 @@ class ConfigProvider
                 Handler\PingHandler::class => Handler\PingHandler::class,
             ],
             'factories'  => [
-                Handler\HomePageHandler::class             => Handler\HomePageHandlerFactory::class,
-                Handler\ParcelTrackerResultsHandler::class => Handler\ParcelTrackerResultsHandlerFactory::class,
-                AddParcelHandler::class                    => ReflectionBasedAbstractFactory::class,
+                /**
+                 * Register the handlers
+                 */
+                Handler\AddParcelHandler::class          => ReflectionBasedAbstractFactory::class,
+                Handler\HomePageHandler::class           => ReflectionBasedAbstractFactory::class,
+                Handler\UpdateParcelStatusHandler::class => ReflectionBasedAbstractFactory::class,
+                Handler\ViewParcelDetailsHandler::class  => Handler\ParcelTrackerResultsHandlerFactory::class,
+
+                /**
+                 * Register the listeners
+                 */
+                LoggerListener::class => ReflectionBasedAbstractFactory::class,
+
+                /**
+                 * Register the services
+                 */
                 Service\ParcelService::class               => new class {
                     public function __invoke(ContainerInterface $container): Service\ParcelService
                     {
@@ -158,6 +170,8 @@ class ConfigProvider
 
     /**
      * Returns the templates configuration
+     *
+     * @return array<string,array<string,array<int,string>>>
      */
     public function getTemplates(): array
     {

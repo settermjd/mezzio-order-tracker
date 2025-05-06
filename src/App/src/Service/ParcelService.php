@@ -11,7 +11,9 @@ use App\Entity\ParcelTrackingDetails;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use Laminas\EventManager\Event;
+use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 
 use function md5;
 use function mt_rand;
@@ -24,6 +26,11 @@ readonly class ParcelService
     {
     }
 
+    /**
+     * @param array<string,string> $parcelData
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
     public function addParcel(array $parcelData): Parcel
     {
         $customer = $this->entityManager->find(Customer::class, $parcelData['customer']);

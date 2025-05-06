@@ -44,7 +44,7 @@ class ParcelTrackingDetails
     /**
      * Many parcel tracking details have many parcel status updates.
      *
-     * @var Collection<int, ParcelStatusUpdate>
+     * @var Collection<int, ParcelStatusUpdate>|null $parcelStatusUpdates
      */
     #[JoinTable(name: 'tracking_status_updates')]
     #[JoinColumn(name: 'tracking_id', referencedColumnName: 'id', onDelete: 'RESTRICT')]
@@ -87,11 +87,17 @@ class ParcelTrackingDetails
         $this->parcel = $parcel;
     }
 
+    /**
+     * @return Collection<int, ParcelStatusUpdate>
+     */
     public function getParcelStatusUpdates(): Collection
     {
         return $this->parcelStatusUpdates;
     }
 
+    /**
+     * @param Collection<int,ParcelStatusUpdate>|null $parcelStatusUpdates
+     */
     public function setParcelStatusUpdates(?Collection $parcelStatusUpdates): void
     {
         $this->parcelStatusUpdates = $parcelStatusUpdates;

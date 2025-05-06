@@ -7,9 +7,14 @@ namespace App\Repository;
 use App\Entity\Customer;
 use App\Entity\Parcel;
 use App\Entity\ParcelTrackingDetails;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\Query\Parameter;
 
+/**
+ * @template-extends EntityRepository<Parcel>
+ */
 class ParcelRepository extends EntityRepository
 {
     /**
@@ -30,8 +35,12 @@ class ParcelRepository extends EntityRepository
             )
             ->setParameter('trackingNumber', $trackingNumber);
 
-        return $query->getQuery()
+        $parcel = $query->getQuery()
                     ->getOneOrNullResult();
+
+        return $parcel instanceof Parcel
+            ? $parcel
+            : null;
     }
 
     public function findCustomer(): ?Customer

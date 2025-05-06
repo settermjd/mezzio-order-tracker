@@ -20,8 +20,6 @@ final readonly class HomePageHandler implements RequestHandlerInterface
     #[Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $data = [];
-
-        return new HtmlResponse($this->template->render('app::parcel-tracker-search-form', $data));
+        return new HtmlResponse($this->template->render('app::parcel-tracker-search-form'));
     }
 }

@@ -18,12 +18,11 @@ return [
             'orm_default' => [
                 'driver_class' => Driver::class,
                 'params'       => [
-                    //'path' => __DIR__ . '/../../data/database/db.sqlite',
-                    'dbname'   => $_ENV['DB_NAME'],
-                    'host'     => $_ENV['DB_HOST'],
-                    'password' => $_ENV['DB_PASSWORD'],
-                    'port'     => '5432',
-                    'user'     => $_ENV['DB_USER'],
+                    'dbname'   => $_ENV['DB_NAME'] ?? '',
+                    'host'     => $_ENV['DB_HOST'] ?? '',
+                    'password' => $_ENV['DB_PASSWORD'] ?? '',
+                    'port'     => $_ENV['DB_PORT'] ?? 5432,
+                    'user'     => $_ENV['DB_USER'] ?? '',
                 ],
             ],
         ],

@@ -79,6 +79,9 @@ class Customer
         return $this->parcels;
     }
 
+    /**
+     * @param Collection<int,Parcel> $parcels
+     */
     public function setParcels(Collection $parcels): void
     {
         $this->parcels = $parcels;
