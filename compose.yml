@@ -13,10 +13,10 @@ secrets:
     environment: TWILIO_AUTH_TOKEN
 
 services:
-  php:
+  webserver:
     build:
       context: ./
-      dockerfile: docker/php/Dockerfile
+      dockerfile: docker/webserver/Dockerfile
     restart: on-failure:5
     ports:
       - "8080:80"
