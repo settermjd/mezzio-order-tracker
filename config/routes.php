@@ -42,6 +42,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->get('/', App\Handler\HomePageHandler::class, 'parcel.search.form');
     $app->post('/search', App\Handler\ViewParcelDetailsHandler::class, 'parcel.view');
     $app->post('/parcel', App\Handler\AddParcelHandler::class, 'parcel.add');
+    $app->post('/parcel/status', App\Handler\UpdateParcelStatusHandler::class, 'parcel.status');
     $app->get('/404', NotFoundHandler::class, '404.not.found');
     $app->get('/api/ping', App\Handler\PingHandler::class, 'api.ping');
 };

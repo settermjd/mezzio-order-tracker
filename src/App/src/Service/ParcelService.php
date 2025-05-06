@@ -68,6 +68,44 @@ readonly class ParcelService
     }
 
     /**
+     * addStatusUpdate adds a parcel status update for the parcel with the provided parcel tracking number
+     *
+     * If there is no parcel with the supplied tracking number, then a not found exception is thrown. Otherwise,
+     * the parcel status update is recorded and a Parcel object is returned.
+     *
+     * @param array<string,string> $statusUpdateData
+     * @throws EntityNotFoundException
+     */
+    public function addStatusUpdate(string $parcelTrackingNumber, array $statusUpdateData): Parcel|null
+    {
+        $parcelTrackingDetails = $this->entityManager
+            ->getRepository(ParcelTrackingDetails::class)
+            ->findOneBy([
+                'trackingNumber' => $parcelTrackingNumber,
+            ]);
+
+        if (! $parcelTrackingDetails instanceof ParcelTrackingDetails) {
+            throw new EntityNotFoundException(
+                "Could not find parcel tracking details with tracking number {$parcelTrackingNumber}."
+            );
+        }
+
+        $parcelStatusUpdate = new ParcelStatusUpdate();
+        $parcelStatusUpdate->setDescription($statusUpdateData['description']);
+        $parcelStatusUpdate->setAddress($statusUpdateData['address']);
+        $parcelStatusUpdate->setCreatedAt(new DateTimeImmutable());
+
+        $statusUpdates = $parcelTrackingDetails->getParcelStatusUpdates();
+        $statusUpdates->add($parcelStatusUpdate);
+
+        $this->entityManager->persist($parcelTrackingDetails);
+
+        $this->entityManager->flush();
+
+        return $parcelTrackingDetails->getParcel();
+    }
+
+    /**
      * Generates and returns a new tracking number, random string of a given length specified by $length.
      */
     private function generateTrackingNumber(int $length): string
